@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Block commits whose added lines look private: absolute home paths, emails, keys,
+# plus any pattern in a LOCAL denylist that is never committed:
+#   .denylist.local            (repo root, git-ignored)
+#   ~/.config/v2w/denylist     (per machine)
+# One extended regex per line; lines starting with # are ignored.
+# Enable once per clone:  git config core.hooksPath .githooks
+set -euo pipefail
+
+root=$(git rev-parse --show-toplevel)
+patterns=(
+  '/Users/[A-Za-z0-9._-]+'
+  '/home/[A-Za-z0-9._-]+'
+  '[A-Za-z]:\\Users\\'
+  '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+  'sk-[A-Za-z0-9_-]{20,}'
+  'gh[pousr]_[A-Za-z0-9]{30,}'
+  'AKIA[0-9A-Z]{16}'
+  '(api[_-]?key|secret|token)[[:space:]]*[:=][[:space:]]*[^[:space:]<{$]{8,}'
+)
+allow='noreply@|example\.(com|org)|you@|user@'
+
+for f in "$root/.denylist.local" "$HOME/.config/v2w/denylist"; do
+  [ -f "$f" ] || continue
+  while IFS= read -r line; do
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    patterns+=("$line")
+  done < "$f"
+done
+
+# never commit these files at all
+bad_files=$(git diff --cached --name-only --diff-filter=AM | grep -E '(^|/)(\.env(\..*)?|\.denylist\.local|.*\.(mp4|mov|wav|mp3|m4a))$' || true)
+if [ -n "$bad_files" ]; then
+  echo "pre-commit: refusing to commit:"; echo "$bad_files" | sed 's/^/  /'; exit 1
+fi
+
+added=$(git diff --cached -U0 --no-color -- . ':(exclude).githooks/pre-commit' | grep -E '^\+[^+]' || true)
+hits=0
+for p in "${patterns[@]}"; do
+  m=$(printf '%s\n' "$added" | grep -inE -- "$p" | grep -viE "$allow" || true)
+  if [ -n "$m" ]; then
+    echo "pre-commit: pattern /$p/ matched:"; printf '%s\n' "$m" | head -5 | sed 's/^/  /'
+    hits=1
+  fi
+done
+if [ "$hits" -ne 0 ]; then
+  echo "Remove or generalise these lines (use <project>/, <piece>/, ~/ placeholders). Bypass only if sure: git commit --no-verify"
+  exit 1
+fi

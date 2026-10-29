@@ -1,0 +1,18 @@
+{
+  "gate": "B",
+  "round": 1,
+  "items": [
+    {"id": "B1", "score": 4, "evidence": "Hook 'Same loop. 16× the fetches.' — 6 words, conflict clear", "fix": "Show the two timers in the same frame so it reads on mute"},
+    {"id": "B2", "score": 5, "evidence": "Explanation order: each step answers the previous question", "fix": ""},
+    {"id": "B3", "score": 5, "evidence": "Beats 15–27: 16 of 16 vs 1 of 16 shown before the payoff", "fix": ""},
+    {"id": "B4", "score": 5, "evidence": "All numbers appear in Claims + sources", "fix": ""},
+    {"id": "B5", "score": 3, "evidence": "Beat 15–27 is 12 s with one message", "fix": "Split 15–27 into row walk (15–21) and column walk (21–27)"},
+    {"id": "B6", "score": 5, "evidence": "Single term 'cache line', introduced after its function", "fix": ""},
+    {"id": "B7", "score": 4, "evidence": "Order deliberately differs from references, with a reason", "fix": "Name the confusion it settles in one caption"},
+    {"id": "B8", "score": 4, "evidence": "'Walk memory the way it's laid out.'", "fix": "Tie it to rows explicitly"},
+    {"id": "B9", "score": 5, "evidence": "4 messages in 40 s", "fix": ""}
+  ],
+  "takeaway": "Memory arrives in blocks, and a column loop throws away most of each block, so it waits on far more fetches.",
+  "must_fix": [],
+  "summary": "Clear order and a computed payoff; one over-long evidence beat."
+}

@@ -1,0 +1,19 @@
+# private, local only
+.denylist.local
+.env
+.env.*
+
+# media never belongs here
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.m4a
+
+# test projects
+/scratch/
+/workspace/
+
+__pycache__/
+*.py[cod]
+.DS_Store
