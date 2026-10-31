@@ -8,7 +8,7 @@ skill's own format — v2w wraps it and does not redefine it.
 | Path | Written by | Notes |
 |---|---|---|
 | `v2w.config.json` | init_project | standing consent + platforms; see below |
-| `.gitignore` | init_project | media, renders, review images, reference frames, `third_party/`, `.env` |
+| `.gitignore` | init_project | whitelist block: ignore everything, track only `develop_log/` and each piece's LOG / STATUS / principle / brief / refcard / critique JSON |
 | `.claude/skills/v2w-*` | init_project / setup.sh | symlinks into this repo |
 | `develop_log/` | you (a debug-log skill) | private raw notes |
 | `pieces/` | new_piece | one folder per video |

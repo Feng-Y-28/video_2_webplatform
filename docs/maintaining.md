@@ -13,6 +13,15 @@ the skills as you go, without publishing the videos or the debugging behind them
 Keep the two folders **side by side, not nested**, so that one `git add -A`
 can never pick up the other.
 
+## What the private project tracks
+
+`init_project.py` writes a whitelist `.gitignore`: everything is ignored except
+`develop_log/` and each piece's text records (`LOG.md`, `STATUS.md`,
+`principle.md`, `brief.md`, `refs/refcard.md`, `critique/*.json`). Those
+records explain why a piece came out the way it did, and you will distil
+lessons from them. Media, scene source, images, config and cloned tools stay on
+disk only.
+
 ## Editing loop
 
 1. Work in `<project>`. The symlinks mean the skills you load there *are* this

@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- `init_project.py`: project `.gitignore` is now a managed whitelist block — only `develop_log/` and per-piece text records (LOG, STATUS, principle, brief, refcard, critique JSON) are tracked.
+
 ## [0.1.0] — 2026-10-29
 
 First version. Paper / idea in, short explainer video out; autonomous except
