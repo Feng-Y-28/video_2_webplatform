@@ -20,9 +20,15 @@ is held by:
   against a fixed rubric, sees nothing of your reasoning;
 - **machine checks**: animate review, `band_energy.py`, `validate_piece.py`.
 
-A failed gate is fixed and re-checked automatically, at most **2 retries** per
-gate. If it still fails, stop and present the sample with the open issues. Do
-not loop forever, and do not lower the bar.
+A failed gate is fixed and re-checked automatically. `max_retries` in
+`v2w.config.json` counts retries *after* the first round, so there are
+`max_retries + 1` automatic rounds in total; after that do one manual fix and
+one verification round, and tick the gate only on PASS. If it still fails, leave
+the gate open, carry its items into `STATUS.md` → Open issues, and continue to
+the sample review. Do not loop forever, and do not lower the bar. Approving the
+sample with an open gate requires the user's explicit waiver, recorded as
+`- <gate> accepted with open issues by user (YYYY-MM-DD): <one line>` under
+`STATUS.md` → User waivers.
 
 **The one human step: the sample review.** The user watches
 `renders/share.mp4` with `publish.md`, and answers *approve* (then publish
@@ -46,11 +52,20 @@ paper / idea
 5 score       v2w-score       → audio/, share.mp4             ⟶ music checks (machine)
 6 review      v2w-review      → machine checks, LOG.md        ⟶ critique D (final)
   ── sample review (user) ── approve / revise
-7 publish     v2w-publish     → publish.md, upload per config
+7 publish     v2w-publish     → publish.md, exports/, upload per config
 ```
+
+**Gate order is fixed:** A → B → C → music → review → D → sample → published.
+A gate ticked while an earlier one is open is `ILLEGAL`. Only v2w-score writes
+`renders/share.mp4` (v2w-production writes `renders/final.mp4`); `exports/` is
+written by publish only; `publish.md` is drafted by review before critique D
+(stage 6) and updated by publish (stage 7).
 
 ## Setup
 
+- Environment: `python3 scripts/check_env.py --project <project>` → Python,
+  ffmpeg + `drawtext`, Node, Playwright resolution and animate's
+  export/review/beats tools. Exit 1 only on FAIL.
 - New project: `python3 scripts/init_project.py <project>` (idempotent; local
   `git init`; writes `v2w.config.json` if missing).
 - New piece: `python3 scripts/new_piece.py <project> <name>` →

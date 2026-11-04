@@ -8,8 +8,12 @@ description: Stage 5 of the v2w pipeline. Give a piece its sound — a synthesiz
 You cannot hear, and nobody listens before the sample review. Everything here is
 **measured**. Gate: **music checks passed** — all of:
 - `../v2w-review/scripts/band_energy.py renders/audio.wav` prints no WARN;
-- animate review SOUND: −14 ± 1 LUFS, TP ≤ −1 dBTP, loudest 100 ms inside the payoff act;
-- no pattern in `score.js` repeating unchanged for more than ~8 s.
+- animate review SOUND: −14 ± 1 LUFS, TP ≤ −1 dBTP, loudest 100 ms inside the payoff act.
+
+Outside the tick, read `score.js` once end to end for any pattern repeating
+unchanged for more than ~8 s. Measurement cannot hear a loop, so this manual
+read is still required: record it and its result in `LOG.md` (review checklist
+row 8). It is not part of `music checks passed`.
 
 Read `references/music-principles.md` first.
 
@@ -48,5 +52,11 @@ music checks pass. Follow `references/music-principles.md` §5. Run `band_energy
 ## Hand-off
 
 `LOG.md`: source, take chosen and why, automation numbers, LUFS / TP / LRA,
-where the loudest 100 ms lands, band_energy summary. Tick `music checks passed`.
-Then go to v2w-review. If the checks still fail after 2 retries, log it as an open issue and continue.
+where the loudest 100 ms lands, band_energy summary, and the manual repetition
+read. Tick `music checks passed` only on PASS. Then go to v2w-review.
+
+Retry budget (same in every stage): `max_retries` from `v2w.config.json`
+(default ≤ 2 retries; at most `max_retries + 1` scored rounds), plus one manual
+fix and one verification round; tick only on PASS. If the checks still fail
+after that budget, carry the open issue to v2w-review and critique D; do not
+silently continue.

@@ -4,6 +4,36 @@
 
 - `init_project.py`: project `.gitignore` is now a managed whitelist block — only `develop_log/` and per-piece text records (LOG, STATUS, principle, brief, refcard, critique JSON) are tracked.
 
+## [0.2.0] — 2026-11-04
+
+Reliability release: a gate cannot be ticked on a stale artefact or out of
+order, publishing is preflighted, and a stdlib test suite runs without CI.
+
+- `v2w-critique`: a round stores `sha256` of its inputs; a changed artefact
+  prints `STALE` (exit 4) and the gate cannot be ticked. Legacy JSON without
+  `inputs` only warns. Budget-spent gates allow one verification round; a
+  later `must_fix` that contradicts an earlier gate's evidence is adjudicated
+  instead of executed.
+- `v2w-orchestra`: `validate_piece.py` rejects illegal gate order, revalidates
+  ticked gates and checks the review / D / sample / published artefacts; the
+  source check accepts Chinese sources, `derived`, tables and `→` references;
+  `critique_gate` separates PASS from the retry budget. New `check_env.py`;
+  `new_piece.py` finds animate via `--animate-dir` / `ANIMATE_DIR`.
+- `v2w-publish`: export preflight compares size and `sha256` with
+  `renders/share.mp4`; the upload cap comes from `max_upload_mb` or the live
+  page (never a fixed number); over-cap files get a two-pass encode and a
+  loudness re-check. Form filling reads every value back from the DOM, reads
+  back the cover time and the declaration toggles, and saves only cropped
+  screenshots. Campaign topics require `allow_campaign_topics`; editing a
+  published note updates it in place.
+- Docs: critique C runs on look + board **before the full build**; `max_retries`
+  is defined as automatic retries after the first round plus one verification
+  round; M includes a manual `score.js` read; dependencies list the required set
+  and `check_env.py`.
+- `tests/`: stdlib `unittest` suite for gates, critique, scaffolding, docs and
+  environment, all fixtures in temp directories and no video render;
+  `examples/minimal` gains critique A and expected exit codes.
+
 ## [0.1.0] — 2026-10-29
 
 First version. Paper / idea in, short explainer video out; autonomous except

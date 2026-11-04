@@ -20,8 +20,13 @@ TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
 CONFIG = {  # standing consent; the pipeline never stops to ask about these
     "allow_browse_references": True,
     "allow_hosted_music_api": False,
+    # Missing means false: do not select platform campaign / event topics.
+    "allow_campaign_topics": False,
     "publish_after_approval": "fill_form",  # none | fill_form | publish
     "platforms": ["xiaohongshu"],
+    # null = read the live upload-page limit; never assume a fixed browser cap.
+    "max_upload_mb": None,
+    # Automatic retries after the first round: max_retries + 1 automatic rounds.
     "max_retries": 2,
 }
 

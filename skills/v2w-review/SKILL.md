@@ -26,16 +26,26 @@ in the same act) sends you back to v2w-script.
 4. **Facts** — every number on screen appears in `brief.md` → Claims + sources,
    with the same value. Translated pieces: check that units and abbreviations
    still read correctly.
-5. Tick `review checks passed` when 1–4 pass. Write `publish.md` (v2w-publish
-   steps 1–2) so critique D can check it, then run **v2w-critique gate D**.
+5. Tick `review checks passed` only when all of these exist: `review/shot*-sheet.jpg`,
+   `review/phone.jpg`, a non-empty `renders/share.mp4`, and a `## vN review`
+   block in `LOG.md` with `Checks:` and `Weakest shot:` lines — and checks 1–4
+   pass. Write `publish.md` (v2w-publish steps 1–2) **before** critique D, then
+   run **v2w-critique gate D**. The order is fixed: publish.md → D → sample
+   review.
 
 ## Sample review (the only human step)
 
+Run this after a D round exists. If the latest `critique/D-r<n>.json` passes
+`critique_gate.py` (exit 0), proceed normally. If D failed, or any earlier gate
+is open, present every open issue and require explicit user approval; record one
+line per open gate under `STATUS.md` → `User waivers`:
+`- <gate> accepted with open issues by user (YYYY-MM-DD): <one line>`.
 Present, in one message: the path to `renders/share.mp4` (and `exports/` copy),
 `publish.md`, a 5-line summary of LOG.md (critique scores, music numbers,
 weakest shot), and every open issue from `STATUS.md`. Ask for **approve** or
 **revise + notes**. Do not say how it sounds.
-- approve → tick `sample approved (user)`, go to v2w-publish step 3.
+- approve → tick `sample approved (user)`; if a gate is open, the waiver line
+  above is required first. Then go to v2w-publish step 3.
 - revise → route each note to the earliest stage it touches (content → distill,
   order → script, picture → production, sound → score); re-run every gate after it.
 
@@ -54,4 +64,7 @@ Weakest shot: <one line>
 ```
 
 Every remaining WARN needs a written reason in LOG.md (e.g. a quiet ending on
-purpose). Critique D checks those reasons.
+purpose). This is the only exception D1 and D3 allow: D3 accepts a
+`band_energy` WARN only when LOG.md gives the written reason, matching D1 and
+this review hand-off. Without that written reason, `band_energy` has no
+exception — fix it before D. Critique D checks those reasons.

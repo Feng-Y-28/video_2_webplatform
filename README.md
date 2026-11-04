@@ -21,14 +21,15 @@ v2w 是一组给 coding agent（Claude Code 等）用的 **skill**，组织方�
  1 拆原理   v2w-distill    → principle.md      ⟶ 评审 A（内容）
  2 参考学习 v2w-reference  → 同话题视频拆解
  3 脚本     v2w-script     → brief.md          ⟶ 评审 B（讲解顺序）
- 4 制作     v2w-production → 样帧 / 分镜 / 成片 ⟶ 评审 C（画面）
+ 4 制作     v2w-production → 样帧 look / 分镜 board ⟶ 评审 C（画面，完整成片之前）
  5 配乐     v2w-score      → 混音              ⟶ 音乐指标（机器）
  6 审核     v2w-review     → 机器检查           ⟶ 评审 D（成片）
    ── 样片：唯一的人工环节（通过 / 打回）──
  7 发布     v2w-publish    → 文案，按配置上传
 ```
 
-- **评审 A–D** 由 `v2w-critique` 执行：新开一个 subagent，只给它产物和固定的 rubric，按 rubric 打分；是否通过由脚本判定。不通过就自动修改，最多重试 2 次，仍不通过则把问题带到样片审核。
+- **评审 A–D** 由 `v2w-critique` 执行：新开一个 subagent，只给它产物和固定的 rubric，按 rubric 打分；是否通过由脚本判定。`max_retries`（默认 2）指首轮之外的自动重试次数，共 `1 + max_retries` 轮；预算用尽后允许一次修复加一轮验证评审，只有那轮通过才算通过，否则把问题带到样片审核。
+- **评审 C 在完整成片之前**：它看样帧 look 和分镜 board，不是先做成片再补评审；成片阶段的改动必须另有复核记录（见评审 D）。
 - **穿插现成的 skill**：读论文用 nature-reader，核实事实用 deep-research，搜参考视频用 claude-in-chrome，扒字幕用转写类 skill，做画面用 animate / anatomy。没装的 skill 会走降级方案。
 - **授权写在项目配置里**：`v2w.config.json` 里一次写好"能否搜参考视频、能否调用托管音乐 API、审核通过后是只填表还是直接发布"，运行中途不会停下来询问。
 
@@ -78,7 +79,7 @@ paper / idea
  1 distill     v2w-distill     → principle.md        ⟶ critique A (content)
  2 reference   v2w-reference   → same-topic videos broken down
  3 script      v2w-script      → brief.md            ⟶ critique B (explanation order)
- 4 production  v2w-production  → look / board / cut  ⟶ critique C (visual)
+ 4 production  v2w-production  → look / board    ⟶ critique C (visual, before the full build)
  5 score       v2w-score       → mix                 ⟶ music checks (machine)
  6 review      v2w-review      → machine checks      ⟶ critique D (final)
    ── sample: the only human step (approve / revise) ──
@@ -87,8 +88,13 @@ paper / idea
 
 - **Critiques A–D** (`v2w-critique`): a fresh subagent scores the artefact
   against a fixed rubric without seeing the author's reasoning; a script
-  decides pass/fail. Failures are fixed automatically (≤ 2 retries), then
-  carried into the sample review.
+  decides pass/fail. `max_retries` (default 2) counts automatic retries
+  *after* the first round, so a gate gets `1 + max_retries` rounds; when the
+  budget is spent, one repair plus a single verification round is allowed, and
+  only a PASS there ticks the gate. Otherwise the issues go to the sample review.
+- **Critique C runs before the full build** on the look and the storyboard,
+  not on a finished cut. A visual change made after C needs its own check and
+  a note in `LOG.md` (critique D holds it).
 - **Composes existing skills**: nature-reader (papers), deep-research (fact
   check), claude-in-chrome (reference search, upload), a transcript skill,
   animate / anatomy (picture). Each has a fallback when missing.

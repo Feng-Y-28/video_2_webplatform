@@ -12,7 +12,7 @@
 | 8 | Repetition | read score.js | no pattern unchanged > ~8 s | vary arpeggio / voicing per chord |
 | 9 | Hook works on mute | your eye on frames 0–3 s | conflict readable | bigger text, fewer words |
 | 10 | Every on-screen number sourced | brief.md | all present | add source or remove claim |
-| 11 | Critique D | v2w-critique | critique_gate.py PASS | apply fixes, ≤ 2 retries |
+| 11 | Critique D | v2w-critique | critique_gate.py PASS | apply fixes, ≤ `max_retries` retries (default 2) + one manual fix + one verification round |
 | 12 | Sample review | user (only human step) | approve | route notes back to the earliest stage |
 
 ## Notes

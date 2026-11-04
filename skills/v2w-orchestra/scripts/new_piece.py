@@ -15,12 +15,23 @@ import argparse
 import datetime
 import json
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
 
 TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
 DEFAULT_ANIMATE = Path(os.environ.get("ANIMATE_DIR", "~/.claude/skills/animate")).expanduser()
+
+# A bare identifier (not a leading year) is recorded as a reference.
+ARXIV = re.compile(
+    r"^(?:arxiv:\s*)?(?:\d{4}\.\d{4,5}(?:v\d+)?|[a-z][a-z\-]*(?:\.[a-z]{2})?/\d{7}(?:v\d+)?)$",
+    re.I,
+)
+DOI = re.compile(r"^(?:doi:\s*)?10\.\d{4,9}/\S+$", re.I)
+DOC_SUFFIXES = {".pdf", ".md", ".txt", ".html", ".htm", ".doc", ".docx",
+                ".tex", ".epub", ".rtf", ".odt"}
+
 DIRS = ["source", "refs/transcripts", "refs/frames", "critique", "audio", "review", "renders"]
 LAYER = {  # template -> path in piece
     "STATUS.md": "STATUS.md",
@@ -76,20 +87,34 @@ def write_layer(piece: Path, input_desc: str, only=None) -> None:
         print(f"  new  {out}")
 
 
+def is_reference(value: str) -> bool:
+    v = value.strip()
+    return bool(v.startswith(("http://", "https://")) or ARXIV.match(v) or DOI.match(v))
+
+
 def place_input(piece: Path, value: str) -> str:
     if not value:
         return "TODO"
+    raw = value.strip()
     path = Path(value).expanduser()
-    if path.is_file():
+    if path.is_file():  # an existing file wins over every identifier pattern
         dst = piece / "source" / path.name
         if not dst.exists():
             shutil.copy2(path, dst)
         return f"source/{path.name}"
-    if value.startswith(("http://", "https://", "arxiv:", "doi:")) or value[:4].isdigit():
-        return value
+    if is_reference(raw):
+        ref = piece / "source" / "reference.txt"
+        if not ref.exists():
+            ref.write_text(raw + "\n")
+        return raw
+    if path.suffix.lower() in DOC_SUFFIXES:
+        print(f"input looks like a document but no such file: {path}", file=sys.stderr)
+        print("  pass an existing file path, or the paper's idea as text", file=sys.stderr)
+        sys.exit(2)
+    # Anything else, including a sentence that starts with a year, is the idea.
     idea = piece / "source" / "idea.md"
     if not idea.exists():
-        idea.write_text(value.strip() + "\n")
+        idea.write_text(raw + "\n")
     return "idea: source/idea.md"
 
 
@@ -101,9 +126,12 @@ def main() -> int:
     ap.add_argument("--template", default="beat-cut", help="animate template: beat-cut | piece | style:<name>")
     ap.add_argument("--from", dest="base", help="copy source from an existing piece (translation / variant)")
     ap.add_argument("--animate-dir", type=Path, default=DEFAULT_ANIMATE)
+    ap.add_argument("--allow-missing-template", action="store_true",
+                    help="continue without animate's piece.json/src (gate C will fail)")
     args = ap.parse_args()
 
     project = args.project.expanduser().resolve()
+    animate = args.animate_dir.expanduser().resolve()
     if not (project / "pieces").is_dir():
         sys.exit(f"{project} has no pieces/ — run init_project.py first")
     piece = project / "pieces" / args.name
@@ -124,15 +152,21 @@ def main() -> int:
                     f"- Copied source from `{args.base}`; renders and critiques not copied.\n")
         print(f"  copied source from {args.base}")
     else:
-        src = animate_template(args.animate_dir, args.template)
-        if src.is_dir():
+        src = animate_template(animate, args.template)
+        missing = not src.is_dir()
+        if missing:
+            print(f"  ! animate template not found at {src}")
+            print("    piece.json and src/ were NOT created; gate C will fail without them.")
+            print("    remedy: set ANIMATE_DIR, pass --animate-dir <animate skill dir>, "
+                  "or see docs/dependencies.md")
+        else:
             copy_missing(src / "piece.json", piece / "piece.json")
             copy_missing(src / "src", piece / "src")
             rename_piece_json(piece)
             print(f"  animate template: {src}")
-        else:
-            print(f"  ! animate template not found at {src}; piece.json/src/ left for the animate skill")
         write_layer(piece, place_input(piece, args.input))
+        if missing and not args.allow_missing_template:
+            return 1
     print("next: v2w-distill (principle.md), then validate_piece.py")
     return 0
 

@@ -1,0 +1,16 @@
+{
+  "gate": "A",
+  "round": 1,
+  "items": [
+    {"id": "A1", "score": 5, "evidence": "Mechanism matches the source; 16x is derived from 64 B / 4 B, not overclaimed", "fix": ""},
+    {"id": "A2", "score": 5, "evidence": "One mechanism: fixed-size blocks make a column walk fetch more blocks", "fix": ""},
+    {"id": "A3", "score": 4, "evidence": "Cache line 64 B has a URL; 16 floats and the ~100-cycle wait are labelled simplified", "fix": ""},
+    {"id": "A4", "score": 5, "evidence": "Two identical loops with different timings is felt without background", "fix": ""},
+    {"id": "A5", "score": 5, "evidence": "Blocks, rows and column jumps are drawable as moving objects", "fix": ""},
+    {"id": "A6", "score": 5, "evidence": "One term (cache line), introduced by what it does", "fix": ""},
+    {"id": "A7", "score": 5, "evidence": "Prefetchers, TLB and cache levels are correctly left out", "fix": ""}
+  ],
+  "takeaway": "A column walk throws away most of every fixed-size block, so it waits on far more fetches.",
+  "must_fix": [],
+  "summary": "One sourced mechanism with a computable 16x payoff; cuts are safe."
+}

@@ -1,8 +1,10 @@
 # Dependencies
 
 v2w composes other open-source skills and tools; it does not vendor them.
-Only **animate**, ffmpeg and Python are required. The others have a fallback
-that each stage describes (and logs when used).
+
+**Required set:** Python 3.9+, ffmpeg **with drawtext**, Node 18+ with
+Playwright + Chromium, and the **animate** skill. Everything else has a
+fallback that each stage describes (and logs when used).
 
 | Dependency | Stage | Without it | Install |
 |---|---|---|---|
@@ -18,5 +20,24 @@ that each stage describes (and logs when used).
 | [claude-code-video-toolkit](https://github.com/digitalsamba/claude-code-video-toolkit) | score (ACE-Step client) | synthesized score | clone into `<project>/third_party/`; see `skills/v2w-score/references/ace-step.md` |
 | A subagent-capable host (e.g. Claude Code) | critique | run the critique in a new session with only the listed files | — |
 
-`new_piece.py` looks for animate at `~/.claude/skills/animate`; override with
-`ANIMATE_DIR=…` or `--animate-dir`.
+Playwright is found through Node's module path. After a global install, set
+`NODE_PATH="$(npm root -g)"` so the Playwright check can resolve it.
+
+## Check the environment
+
+`skills/v2w-orchestra/scripts/check_env.py` checks the required set and prints
+copy-paste fixes (required item missing → exit 1):
+
+```bash
+python3 <repo>/skills/v2w-orchestra/scripts/check_env.py <project>
+python3 <repo>/skills/v2w-orchestra/scripts/check_env.py --animate-dir <path>
+```
+
+`bash setup.sh --dev` enables the privacy hook for contributors and prints this
+command. Run it before the first export on a new machine.
+
+`new_piece.py` resolves animate from `--animate-dir`, then `ANIMATE_DIR`, then
+the default `~/.claude/skills/animate`. When the template is missing it prints
+the path it tried and the override to use, and exits 1 unless you pass
+`--allow-missing-template` (gate C will fail without `piece.json`/`src/`).
+`check_env.py` reports the same resolved path in its animate check.

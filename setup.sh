@@ -10,7 +10,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 
 case "${1:-}" in
   ""|-h|--help)
-    sed -n '2,8p' "$0"; exit 0 ;;
+    sed -n '2,7p' "$0"; exit 0 ;;
   --global)
     mkdir -p "$HOME/.claude/skills"
     for s in "$HERE"/skills/v2w-*/; do
@@ -21,7 +21,8 @@ case "${1:-}" in
   --dev)
     git -C "$HERE" config core.hooksPath .githooks
     chmod +x "$HERE/.githooks/pre-commit"
-    echo "pre-commit hook enabled. Put private patterns in $HERE/.denylist.local (git-ignored)." ;;
+    echo "pre-commit hook enabled. Put private patterns in $HERE/.denylist.local (git-ignored)."
+    echo "environment check: python3 $HERE/skills/v2w-orchestra/scripts/check_env.py <project>" ;;
   *)
     python3 "$HERE/skills/v2w-orchestra/scripts/init_project.py" "$1" ;;
 esac

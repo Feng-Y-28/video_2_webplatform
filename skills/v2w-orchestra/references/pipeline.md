@@ -3,11 +3,24 @@
 ```
 paper/idea ─▶ 1 distill ─A─▶ 2 reference ─▶ 3 script ─B─▶ 4 production ─C─▶ 5 score ─M─▶ 6 review ─D─▶ [sample: user] ─▶ 7 publish
                   ▲                             ▲              ▲              ▲              │                │
-                  └─────────── each gate: fix + re-check ≤ 2 retries, then stop with open issues ┘   revise ─┘
+                  └── each gate: max_retries + 1 automatic rounds, one fix + --verify round, then stop ┘   revise ─┘
 ```
 
-A–D: fresh-subagent critiques (v2w-critique). M: machine music checks.
+A–D: fresh-subagent critiques (v2w-critique). M: machine checks plus a manual
+`score.js` read (the measurement cannot hear a loop).
 The only human step is the sample review.
+
+**Gate order is fixed:** A → B → C → music → review → D → sample → published.
+A gate ticked while an earlier one is open is `ILLEGAL`.
+
+**Retry budget:** `max_retries` counts automatic retries after the first round,
+so `max_retries + 1` automatic rounds in total; then exactly one manual-fix
+round plus its `--verify` verification round. Tick the gate only on PASS.
+
+**Writers:** v2w-production writes `renders/final.mp4`; only v2w-score writes
+`renders/share.mp4`; `exports/` is written by publish only; `publish.md` is
+drafted by review before critique D (stage 6) and updated by publish (stage 7).
+Run `scripts/check_env.py` before the first production export.
 
 ## Why this order
 

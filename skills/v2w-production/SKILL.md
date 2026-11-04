@@ -16,23 +16,54 @@ Dependencies: `../../docs/dependencies.md`.
 ## Inputs / outputs
 
 - In: `brief.md` (gate B passed), `refs/refcard.md` (devices worth borrowing).
-- Out: `review/look.png`, `review/board.png`, `src/`, `index.html`,
-  `renders/final.mp4`, `renders/share.mp4`.
+- Out: `review/look.png`, `review/board.png`, `review/text-boxes.json`, `src/`,
+  `index.html`, `renders/final.mp4`.
+- Ownership: only v2w-score writes renders/share.mp4; production writes
+  `renders/final.mp4` and the review artefacts (`review/look.png`,
+  `review/board.png`, `review/text-boxes.json`). Review adds the contact
+  sheets.
 - Gate: **C visual critique passed**, run on look + board *before* the full build.
 
 ## Order
 
 1. Look frames (2–4 most different beats) → `review/look.png`.
 2. Storyboard of every beat → `review/board.png`.
-3. **v2w-critique gate C**; fix → re-run (≤ 2 retries). Only then build.
-4. Build the first 10 s, tile it, fix; then build and export the whole piece.
-5. Record the cut list, critique fixes and build errors in `LOG.md`.
+3. **Measure text boxes before gate C.** Render the look and board images,
+   then measure the text on the rendered output — never from the source font
+   size. For each run (look, board, and every re-run) record the smallest body
+   caption height and the smallest label height in `review/text-boxes.json`:
+
+   ```json
+   {"runs": [{"run": "look", "render": "review/look.png",
+              "width": 1080, "body_px": 44, "label_px": 34}]}
+   ```
+
+   The critic reads `runs[]`; record it for every new piece. Gate C warns when
+   the file is absent (a legacy piece), but with no measured heights C3 cannot
+   score above 2. Fail C3 when any run at 1080 width has `body_px < 40` or
+   `label_px < 32` (scale the thresholds for another width). **CJK glyphs render
+   smaller than Latin at the same nominal size**, so a CJK caption that passes in
+   the editor can still measure under the threshold; measure the glyphs that will
+   actually be on screen.
+4. **v2w-critique gate C**; fix → re-run (≤ 2 retries automatic, from
+   `max_retries`; then one manual fix and one verification round, ticking only
+   on PASS). Only then build.
+5. Build the first 10 s, tile it, fix; then build and export the whole piece.
+6. Record the cut list, critique fixes and build errors in `LOG.md`.
 
 ## Environment
 
-Before the first build in a shell, check animate's requirements (Node,
-Playwright + Chromium, ffmpeg). See `../shared/pitfalls.md` for the
-`NODE_PATH` and `ffmpeg-full` issues — both show up on a fresh macOS install.
+Before the first build in a shell, run the environment check instead of
+checking tools by hand:
+
+```
+python3 .claude/skills/v2w-orchestra/scripts/check_env.py
+```
+
+(repo path: `skills/v2w-orchestra/scripts/check_env.py`). It reports Node,
+Playwright + Chromium, the ffmpeg filters the pipeline uses, and exits non-zero
+when a required tool is missing. See `../shared/pitfalls.md` for the
+`NODE_PATH` and `ffmpeg-full` remedies — both show up on a fresh macOS install.
 
 ## Conventions for technical explainers
 

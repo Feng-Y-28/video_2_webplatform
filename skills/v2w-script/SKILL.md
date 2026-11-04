@@ -29,8 +29,10 @@ Output: `<piece>/brief.md`. Gate: **B script critique passed**.
 6. **Sound plan.** Synthesized score (exact sync, default) or an external
    track (only if `allow_hosted_music_api` or a track was supplied). Mark the
    payoff hit time.
-7. Run **v2w-critique** gate `B`; fix → re-run (≤ 2 retries). Tick
-   `B script critique passed`.
+7. Run **v2w-critique** gate `B`; fix → re-run: at most `max_retries`
+   automatic retries (default ≤ 2 retries; at most `max_retries + 1` scored
+   rounds), then one manual fix and one verification round. Tick
+   `B script critique passed` only on PASS.
 
 ## Rules
 

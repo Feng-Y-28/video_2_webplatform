@@ -8,14 +8,24 @@ bottom with the version that added them.
 - **Symptom:** animate `review.mjs` fails with `No such filter: 'drawtext'`
   while building the first contact sheet.
 - **Cause:** the default Homebrew `ffmpeg` bottle is built without libfreetype.
-- **Fix:** `brew install ffmpeg-full` (keg-only), and prepend it only for review:
+- **Fix:** verify the build before blaming the toolchain:
+  `ffmpeg -filters | grep drawtext` must print the `drawtext` filter. If it
+  does not, `brew install ffmpeg-full` (keg-only) and prepend it only for
+  review:
   `PATH="$(brew --prefix)/opt/ffmpeg-full/bin:$PATH" node tools/review.mjs <piece>`.
+  `python3 skills/v2w-orchestra/scripts/check_env.py` runs this check for you.
 
 ### animate tools cannot find Playwright — v0.1.0
 - **Symptom:** `still.mjs` / `export.mjs` fail with `Cannot find module 'playwright'`.
-- **Cause:** Playwright is installed outside the skill directory.
-- **Fix:** `export NODE_PATH=<dir containing node_modules with playwright>`
-  before running animate tools.
+- **Cause:** Node does not search the global module directory by default, so a
+  Playwright installed outside the skill directory is invisible to `require()`.
+- **Fix:** find the global root and export it before running animate tools:
+  `export NODE_PATH="$(npm root -g)"`, then verify with
+  `node -e "require.resolve('playwright')"` (it prints a path when it
+  resolves). Keep `NODE_PATH` set in the shell that runs the tools. Alternative:
+  install locally in the project with `npm ci` and run from that directory.
+  `python3 skills/v2w-orchestra/scripts/check_env.py` checks Node and Playwright
+  for you.
 
 ### External music loses its volume automation — v0.1.0
 - **Symptom:** you automate a track (duck before the hit, lift the payoff),

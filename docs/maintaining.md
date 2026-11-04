@@ -51,7 +51,23 @@ words (username, handles, account names, private repo names) in
 `.denylist.local`. That file is git-ignored on purpose: a committed denylist
 would publish exactly the words it is meant to protect.
 
+## Tests
+
+Changes to a script or to a rule in a `SKILL.md` are checked by the stdlib
+suite:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+It needs no network, no ffmpeg render and no real project: every fixture lives
+under `tempfile.TemporaryDirectory()`. Add a test when you change gate labels,
+the critique gate, scaffolding, or a documented contract. `examples/minimal`
+is a second, manual smoke test with expected exit codes.
+
 ## Releases
 
 Semantic versions in `CHANGELOG.md`. Bump minor for a new stage behaviour or
-script, patch for wording and pitfalls.
+script, patch for wording and pitfalls. `0.2.0` is the reliability release:
+stale-critique detection, illegal-state checks, the verification round, the
+publish preflight and the test suite.

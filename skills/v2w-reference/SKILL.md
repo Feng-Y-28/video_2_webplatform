@@ -32,7 +32,10 @@ and critiques B and C.
    - analogies worth borrowing as *mechanisms*, not copied wording or footage;
    - the confusion our video should settle (often the best payoff);
    - **topic-specific checks** for critiques B and C (e.g. "every video draws X
-     wrong; ours must not"). Critiques score these under B7 / C7.
+     wrong; ours must not"). A topic-specific check that fails must be added to
+     the critique's `must_fix` (B7 / C7 are non-blocking, so a low score alone
+     does not gate), or it must be labelled advisory. Do not leave a failed
+     check as "score it under B7" and imply that it gates.
 
 ## Rules
 
@@ -42,3 +45,7 @@ and critiques B and C.
 - Cite reference videos only in `refcard.md`. Never in the video or the post.
 - If nothing good exists, write that down. It is useful to know, and it may be the
   reason to make this video.
+- Reference has no gate of its own. When a topic-specific check fails at gate B
+  or C, it follows the normal retry budget: at most `max_retries` automatic
+  retries (default ≤ 2 retries; at most `max_retries + 1` scored rounds), plus
+  one manual fix and one verification round, with the gate ticked only on PASS.

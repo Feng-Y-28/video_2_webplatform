@@ -34,8 +34,10 @@ Gate: **A content critique passed**.
    Default for technical topics: undergraduates outside the field.
 7. **Left out.** List what is true but not needed for this conflict. A short
    video carries one idea.
-8. Run **v2w-critique** with gate `A`. Fix and re-run (≤ 2 rounds), then
-   tick `A content critique passed` in `STATUS.md`.
+8. Run **v2w-critique** with gate `A`. Fix and re-run: at most `max_retries`
+   automatic retries (default ≤ 2 retries; at most `max_retries + 1` scored
+   rounds), then one manual fix and one verification round. Tick
+   `A content critique passed` in `STATUS.md` only on PASS.
 
 ## Rules
 

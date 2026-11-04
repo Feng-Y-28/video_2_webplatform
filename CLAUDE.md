@@ -26,4 +26,7 @@ reviews the diff → commit.
 
 `skills/v2w-*/SKILL.md` (instructions), `references/` (rules, templates),
 `scripts/` (deterministic helpers: standard library + ffmpeg, no network, no LLM).
-`skills/shared/` is read by several stages.
+`skills/shared/` is read by several stages. `tests/` holds the stdlib
+`unittest` suite (`python3 -m unittest discover -s tests -v`), `docs/` the
+architecture, dependency and maintenance notes, and `examples/minimal/` a
+made-up smoke piece.
