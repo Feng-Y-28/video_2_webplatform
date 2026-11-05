@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+- Codex branch: project `.agents/skills/` installation, user-level installation
+  with an optional destination, and non-overwriting `AGENTS.md` scaffolding.
+  Link `shared/` alongside all nine skills so shared references remain usable.
+- Shared animate discovery for project/user Codex locations, `CODEX_HOME`,
+  explicit overrides and existing Claude installations.
+- Codex tool routing and fresh-context critique instructions; the read-only
+  critic returns JSON and the orchestrator saves it unchanged.
+- Regression coverage for installation, preserved user files, symlink entry
+  points and animate path precedence.
+
 - `init_project.py`: project `.gitignore` is now a managed whitelist block — only `develop_log/` and per-piece text records (LOG, STATUS, principle, brief, refcard, critique JSON) are tracked.
 
 ## [0.2.0] — 2026-11-04

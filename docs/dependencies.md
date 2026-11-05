@@ -14,30 +14,35 @@ fallback that each stage describes (and logs when used).
 | Python 3.9+ | v2w scripts | — (required) | standard library only |
 | [nature-reader](https://github.com/Yuan1z0825/nature-skills) skill | distill | read the PDF directly | from the nature-skills pack |
 | [deep-research](https://github.com/Imbad0202/academic-research-skills) skill | distill (fact-check mode) | open each primary source yourself | from academic-research-skills |
-| Browser automation (e.g. Claude in Chrome) | reference, publish | no references; publish.md only | Claude in Chrome extension |
+| Codex search, connected plugins or browser automation | reference, publish | no references; publish.md and local export only | use tools available in the session; see [Codex setup](codex.md) |
 | A transcript skill (yt-dlp + whisper style) | reference | read platform captions | any; `yt-dlp` + `faster-whisper` |
 | [anatomy](https://github.com/wheresryan22/anatomy) skill | production (companion figure) | skip | clone into your skills dir |
 | [claude-code-video-toolkit](https://github.com/digitalsamba/claude-code-video-toolkit) | score (ACE-Step client) | synthesized score | clone into `<project>/third_party/`; see `skills/v2w-score/references/ace-step.md` |
-| A subagent-capable host (e.g. Claude Code) | critique | run the critique in a new session with only the listed files | — |
+| Codex with fresh-context subagents | critique | new session with only the listed files; otherwise leave the gate open | see [Codex setup](codex.md) |
 
 Playwright is found through Node's module path. After a global install, set
 `NODE_PATH="$(npm root -g)"` so the Playwright check can resolve it.
 
 ## Check the environment
 
-`skills/v2w-orchestra/scripts/check_env.py` checks the required set and prints
-copy-paste fixes (required item missing → exit 1):
+`skills/v2w-orchestra/scripts/check_env.py` checks the toolchain and prints
+PASS / WARN / FAIL diagnostics (only FAIL exits 1; missing animate or
+Playwright currently warns, so resolve those warnings before rendering):
 
 ```bash
-python3 <repo>/skills/v2w-orchestra/scripts/check_env.py <project>
+python3 <repo>/skills/v2w-orchestra/scripts/check_env.py --project <project>
 python3 <repo>/skills/v2w-orchestra/scripts/check_env.py --animate-dir <path>
 ```
 
 `bash setup.sh --dev` enables the privacy hook for contributors and prints this
 command. Run it before the first export on a new machine.
 
-`new_piece.py` resolves animate from `--animate-dir`, then `ANIMATE_DIR`, then
-the default `~/.claude/skills/animate`. When the template is missing it prints
+`new_piece.py` and `check_env.py` share animate discovery: `--animate-dir`,
+then `ANIMATE_DIR`, project `.agents/skills/animate`, user
+`~/.agents/skills/animate`, `$CODEX_HOME/skills/animate` (defaults to
+`~/.codex/skills/animate`), then project and user `.claude/skills/animate`
+for existing installs. Explicit overrides are authoritative, even if missing.
+With no installed match the diagnostic path is `~/.agents/skills/animate`. When the template is missing it prints
 the path it tried and the override to use, and exits 1 unless you pass
 `--allow-missing-template` (gate C will fail without `piece.json`/`src/`).
 `check_env.py` reports the same resolved path in its animate check.

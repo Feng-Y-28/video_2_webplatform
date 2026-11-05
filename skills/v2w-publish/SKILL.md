@@ -36,7 +36,8 @@ Output: `<piece>/publish.md`. Gate: **published**.
 4. **Only after `sample approved (user)` is ticked**, act on
    `publish_after_approval`:
    - `none` → stop; publish.md is the deliverable.
-   - `fill_form` → in the user's logged-in browser (e.g. claude-in-chrome),
+   - `fill_form` → through an available connector or the user's logged-in browser
+     automation tools (see `../../docs/codex.md`),
      open the creator page, upload the export, and fill every field from
      `publish.md`:
      * Locate fields by **role and accessible name**, never by coordinates.
@@ -50,6 +51,8 @@ Output: `<piece>/publish.md`. Gate: **published**.
        chrome (avatar, handle, sidebar, URL bar) must never be saved.
      Then **stop before the final Publish button**. Report what was filled.
    - `publish` → as above, then click Publish. Record the post URL.
+   If upload tools or a logged-in session are unavailable, keep the export and
+   `publish.md`, record the limitation, and leave `published` unticked.
 5. Record date, platform, status and URL in `publish.md` and `LOG.md`; tick
    `published` when it is live (or when the form is filled and the user posts it).
 

@@ -14,7 +14,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-SKILLS_ROOT = Path(__file__).resolve().parents[2]  # .../skills
+from skill_paths import link_skill_bundle
+
 TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
 
 CONFIG = {  # standing consent; the pipeline never stops to ask about these
@@ -30,7 +31,7 @@ CONFIG = {  # standing consent; the pipeline never stops to ask about these
     "max_retries": 2,
 }
 
-DIRS = ["develop_log", "pieces", "exports", "third_party", ".claude/skills"]
+DIRS = ["develop_log", "pieces", "exports", "third_party"]
 
 BEGIN, END = "# >>> v2w (managed by init_project.py)", "# <<< v2w"
 # Whitelist: ignore everything, then track only the text records of the work —
@@ -72,22 +73,7 @@ def ensure_gitignore(project: Path) -> None:
 
 
 def link_skills(project: Path) -> None:
-    target = project / ".claude" / "skills"
-    for link in target.glob("v2w-*"):  # skills renamed or removed upstream
-        if link.is_symlink() and not link.exists():
-            link.unlink()
-            print(f"  drop {link.relative_to(project)} (dangling)")
-    for skill in sorted(SKILLS_ROOT.iterdir()):
-        if not (skill / "SKILL.md").exists():
-            continue  # skips shared/
-        link = target / skill.name
-        if link.is_symlink():
-            link.unlink()
-        elif link.exists():
-            print(f"  ! {link} is a real path, skipped")
-            continue
-        link.symlink_to(skill)
-        print(f"  link {link.relative_to(project)} -> {skill}")
+    link_skill_bundle(project / ".agents" / "skills")
 
 
 def copy_if_missing(src: Path, dst: Path) -> None:
@@ -101,7 +87,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("project", type=Path)
     ap.add_argument("--no-git", action="store_true", help="do not run git init")
-    ap.add_argument("--no-link", action="store_true", help="do not symlink skills into .claude/skills")
+    ap.add_argument("--no-link", action="store_true", help="do not symlink skills into .agents/skills")
     args = ap.parse_args()
 
     project = args.project.expanduser().resolve()
@@ -111,6 +97,7 @@ def main() -> int:
     for d in DIRS:
         (project / d).mkdir(parents=True, exist_ok=True)
     copy_if_missing(TEMPLATES / "develop_log_README.md", project / "develop_log" / "README.md")
+    copy_if_missing(TEMPLATES / "project_AGENTS.md", project / "AGENTS.md")
     ensure_gitignore(project)
     cfg = project / "v2w.config.json"
     if not cfg.exists():

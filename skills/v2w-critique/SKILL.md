@@ -1,6 +1,6 @@
 ---
 name: v2w-critique
-description: Independent rubric critique for the v2w pipeline. Spawns a fresh subagent that sees only an artefact and a fixed rubric (gate A content, B script, C visual, D final), scores every item 1–5 with evidence, and returns JSON; a deterministic script stamps the input digests before the critic and then decides PASS / FAIL, staleness and how many rounds are left. Used by v2w-distill, v2w-script, v2w-production and v2w-review in place of human check-ins. TRIGGER when a v2w stage says "run critique <gate>", or the user asks to "critique / score / review the principle / script / storyboard / final cut against the rubric".
+description: Independent rubric critique for the v2w pipeline. Spawns a fresh subagent that sees only an artefact and a fixed rubric (gate A content, B script, C visual, D final), scores every item 1–5 with evidence, and returns JSON; a deterministic script stamps the input digests before the critic and then decides PASS / FAIL, staleness and how many rounds are left. Used by v2w-distill, v2w-script, v2w-production and v2w-review in place of human check-ins. TRIGGER when a v2w stage says "run critique A/B/C/D", or the user asks to "critique / score / review the principle / script / storyboard / final cut against the rubric".
 ---
 
 # v2w-critique
@@ -38,8 +38,12 @@ tags, cover timestamp and declarations stay hashed.
    never hashed, and stamping never rewrites the critic's output. A critique
    file that declares `"schema": 2` but has no matching stamp is rejected
    (exit 3): stamp before the critic runs, never after.
-3. Spawn **one fresh subagent** (general-purpose; read-only work) with exactly
-   this prompt, filled in:
+3. Spawn **one fresh subagent** with no inherited conversation (read-only
+   access to the artefacts; see `../../docs/codex.md`). If the host exposes
+   `fork_turns`, use `"none"`; never fork the author's context into the critic.
+   If isolation is unavailable, use a separate fresh session with only these
+   inputs; otherwise leave the gate open and report the limitation. Give the
+   critic exactly this prompt, filled in:
 
    ```
    You are an independent reviewer for a short explainer video. Judge only
@@ -58,7 +62,7 @@ tags, cover timestamp and declarations stay hashed.
 
    For every rubric item give: id, score 1-5, evidence (quote or file+location),
    fix (one concrete action, or "" if score 5). List blocking problems in
-   must_fix. Write ONLY this JSON to <piece>/critique/<gate>-r<n>.json:
+   must_fix. Return ONLY this JSON; do not edit any files:
    {"gate": "<gate>", "round": n, "schema": 2,
     "items": [{"id": "", "score": 0, "evidence": "", "fix": ""}],
     "takeaway": "<the one idea a viewer would leave with, in one sentence>",
@@ -69,6 +73,9 @@ tags, cover timestamp and declarations stay hashed.
    The "Already ruled out" block is present on **every** prompt, round 1
    included and for every gate, fed from `LOG.md`. Do not add your opinion, the
    history of the piece, or hints about what you expect.
+   Save the returned JSON unchanged to `<piece>/critique/<gate>-r<n>.json`.
+   Keep the stamp created before the review; do not restamp changed inputs to
+   make an old critique pass.
 4. `python3 scripts/critique_gate.py <piece> <gate>` → PASS / FAIL, rounds left.
    For the verification round use `--verify`. The script recomputes the input
    set and every digest; it will not score a stale round.

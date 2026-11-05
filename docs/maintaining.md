@@ -7,7 +7,7 @@ the skills as you go, without publishing the videos or the debugging behind them
 <project>/  (private, local git)              video_2_webplatform/  (public)
   develop_log/   raw notes, errors, dead ends   skills/…/references   rules
   pieces/*/LOG.md  per-video decisions   ──▶    shared/pitfalls.md   breakages
-  .claude/skills/v2w-* → symlinks ────────────▶ skills/v2w-*         (edited live)
+  .agents/skills/v2w-* → symlinks ────────────▶ skills/v2w-*         (edited live)
 ```
 
 Keep the two folders **side by side, not nested**, so that one `git add -A`

@@ -14,14 +14,14 @@ variant (renders and critiques are not copied; gates start open).
 import argparse
 import datetime
 import json
-import os
 import re
 import shutil
 import sys
 from pathlib import Path
 
+from skill_paths import resolve_animate
+
 TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
-DEFAULT_ANIMATE = Path(os.environ.get("ANIMATE_DIR", "~/.claude/skills/animate")).expanduser()
 
 # A bare identifier (not a leading year) is recorded as a reference.
 ARXIV = re.compile(
@@ -125,13 +125,13 @@ def main() -> int:
     ap.add_argument("--input", default="", help="paper file, arXiv id / DOI / URL, or the idea as text")
     ap.add_argument("--template", default="beat-cut", help="animate template: beat-cut | piece | style:<name>")
     ap.add_argument("--from", dest="base", help="copy source from an existing piece (translation / variant)")
-    ap.add_argument("--animate-dir", type=Path, default=DEFAULT_ANIMATE)
+    ap.add_argument("--animate-dir", type=Path, help="override animate skill discovery")
     ap.add_argument("--allow-missing-template", action="store_true",
                     help="continue without animate's piece.json/src (gate C will fail)")
     args = ap.parse_args()
 
     project = args.project.expanduser().resolve()
-    animate = args.animate_dir.expanduser().resolve()
+    animate = resolve_animate(project, args.animate_dir)
     if not (project / "pieces").is_dir():
         sys.exit(f"{project} has no pieces/ — run init_project.py first")
     piece = project / "pieces" / args.name

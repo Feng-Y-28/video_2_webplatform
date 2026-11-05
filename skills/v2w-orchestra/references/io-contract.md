@@ -9,7 +9,8 @@ skill's own format — v2w wraps it and does not redefine it.
 |---|---|---|
 | `v2w.config.json` | init_project | standing consent + platforms; see below |
 | `.gitignore` | init_project | whitelist block: ignore everything, track only `develop_log/` and each piece's LOG / STATUS / principle / brief / refcard / critique JSON |
-| `.claude/skills/v2w-*` | init_project / setup.sh | symlinks into this repo |
+| `AGENTS.md` | init_project | Codex project instructions; existing file preserved |
+| `.agents/skills/v2w-*`, `.agents/skills/shared` | init_project / setup.sh | symlinks into this repo |
 | `develop_log/` | you (a debug-log skill) | private raw notes |
 | `pieces/` | new_piece | one folder per video |
 | `exports/` | publish only | delivered MP4s, human-readable names (stage 7; never written by an earlier stage) |

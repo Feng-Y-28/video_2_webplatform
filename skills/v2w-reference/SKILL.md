@@ -11,7 +11,9 @@ and critiques B and C.
 ## Steps
 
 1. **Search** — only if `v2w.config.json` → `allow_browse_references` is true.
-   Use the browser (e.g. **claude-in-chrome**) on the platforms in the config.
+   Use available Codex search tools, connected plugins or browser automation
+   on the platforms in the config (see `../../docs/codex.md`). If no suitable
+   tool is available, record "no references (browser unavailable)" and continue.
    Query the *mechanism* and the *problem*, not the paper title. Prefer
    recent videos, high engagement relative to the account's size, and the
    same audience level. If browsing is not allowed, write "no references

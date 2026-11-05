@@ -14,8 +14,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+from skill_paths import resolve_animate
+
 MIN_PY = (3, 9)
-DEFAULT_ANIMATE = Path(os.environ.get("ANIMATE_DIR", "~/.claude/skills/animate")).expanduser()
 TOOLS = ("export.mjs", "review.mjs", "beats.mjs")
 PLAYWRIGHT_MODULES = ("playwright", "playwright-core")
 
@@ -23,11 +24,11 @@ PLAYWRIGHT_MODULES = ("playwright", "playwright-core")
 def pretty(path) -> str:
     """Never print an expanded home path."""
     s = str(path)
-    home = str(Path.home())
-    if s == home:
-        return "~"
-    if s.startswith(home + os.sep):
-        return "~" + s[len(home):]
+    for home in (str(Path.home()), str(Path.home().resolve())):
+        if s == home:
+            return "~"
+        if s.startswith(home + os.sep):
+            return "~" + s[len(home):]
     return s
 
 
@@ -67,11 +68,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--project", type=Path, help="check a scaffolded project directory too")
-    ap.add_argument("--animate-dir", type=Path, default=DEFAULT_ANIMATE)
+    ap.add_argument("--animate-dir", type=Path, help="override animate skill discovery")
     args = ap.parse_args()
 
     project = args.project.expanduser().resolve() if args.project else None
-    animate = args.animate_dir.expanduser().resolve()
+    animate = resolve_animate(project, args.animate_dir)
     results = []
 
     def add(level: str, message: str) -> None:

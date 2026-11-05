@@ -7,7 +7,9 @@ description: Orchestrate the video_2_webplatform pipeline end to end, autonomous
 
 Top-level driver. Read this file, then load each stage's `SKILL.md` when you
 reach that stage. Paths are relative to this skill's directory unless they
-start with `<project>/` or `<piece>/`.
+start with `<project>/` or `<piece>/`. Resolve the installed skill symlink
+to its repository directory before following `../../docs/` references. For
+Codex installation, tool routing and isolated critiques, read `../../docs/codex.md`.
 
 **Input:** a paper (PDF, arXiv id, DOI, URL) or an idea in a few sentences.
 **Output:** `<piece>/renders/share.mp4` and `<piece>/publish.md`.
@@ -38,7 +40,8 @@ notes touch).
 **Standing consent** comes from `<project>/v2w.config.json` (written by
 `init_project.py`): whether you may browse for references, call hosted music
 APIs, and upload after approval. If a key is `false` or missing, skip that
-action and use the fallback. Do not stop to ask.
+action and use the fallback. Do not stop to ask. These preferences do not
+grant tool access or override Codex sandbox rules or required host approvals.
 
 ## Pipeline
 
@@ -67,7 +70,8 @@ written by publish only; `publish.md` is drafted by review before critique D
   ffmpeg + `drawtext`, Node, Playwright resolution and animate's
   export/review/beats tools. Exit 1 only on FAIL.
 - New project: `python3 scripts/init_project.py <project>` (idempotent; local
-  `git init`; writes `v2w.config.json` if missing).
+  `git init`; writes `v2w.config.json` and `AGENTS.md` if missing, and links
+  the bundle into `.agents/skills/`).
 - New piece: `python3 scripts/new_piece.py <project> <name>` →
   `STATUS.md`, `principle.md`, `refs/refcard.md`, `brief.md`, `LOG.md`, animate's `piece.json` + `src/`.
 - Status: `python3 scripts/validate_piece.py <piece>` → open gates, next step.

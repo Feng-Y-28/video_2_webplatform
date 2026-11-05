@@ -15,7 +15,7 @@ ARCH = REPO / "docs" / "architecture.md"
 DEPS = REPO / "docs" / "dependencies.md"
 MAINT = REPO / "docs" / "maintaining.md"
 CHANGELOG = REPO / "CHANGELOG.md"
-CLAUDE = REPO / "CLAUDE.md"
+AGENTS = REPO / "AGENTS.md"
 EXAMPLES = REPO / "examples" / "minimal"
 
 
@@ -93,8 +93,8 @@ class DocsConsistencyTest(unittest.TestCase):
         self.assertIn("unittest discover -s tests", body)
         self.assertIn("0.2.0", body)
 
-    def test_claude_layout_mentions_tests(self):
-        self.assertIn("tests/", text(CLAUDE))
+    def test_agents_layout_mentions_tests(self):
+        self.assertIn("tests/", text(AGENTS))
 
     def test_changelog_has_020(self):
         body = text(CHANGELOG)

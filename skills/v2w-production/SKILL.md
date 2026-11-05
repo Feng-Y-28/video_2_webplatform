@@ -57,7 +57,7 @@ Before the first build in a shell, run the environment check instead of
 checking tools by hand:
 
 ```
-python3 .claude/skills/v2w-orchestra/scripts/check_env.py
+python3 .agents/skills/v2w-orchestra/scripts/check_env.py
 ```
 
 (repo path: `skills/v2w-orchestra/scripts/check_env.py`). It reports Node,

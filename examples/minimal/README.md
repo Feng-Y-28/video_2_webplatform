@@ -48,7 +48,7 @@ Expected tree after `new_piece.py` (with animate installed):
 
 ```
 /tmp/v2w-demo/
-├── v2w.config.json   .gitignore   .claude/skills/v2w-* → this repo
+├── AGENTS.md   v2w.config.json   .gitignore   .agents/skills/v2w-* → this repo
 ├── develop_log/   exports/   third_party/
 └── pieces/cache-miss/
     ├── STATUS.md   principle.md   brief.md   LOG.md   piece.json
@@ -57,4 +57,4 @@ Expected tree after `new_piece.py` (with animate installed):
     ├── critique/   src/   audio/   review/   renders/
 ```
 
-Then open the project in Claude Code and say *"run v2w on cache-miss"*.
+Then open the project in Codex and say *"run v2w on cache-miss"*.
